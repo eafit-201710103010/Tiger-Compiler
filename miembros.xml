@@ -1,0 +1,15 @@
+<grupo>
+  <nombre>duolujo</nombre>
+  <url>https://svn.riouxsvn.com/270181duolujo</url>
+  <miembro>
+    <nombre>Luisa María Vásquez Gómez</nombre>
+    <codigo>201710103010</codigo>
+    <email>lmvasquezg@eafit.edu.co</email>
+  </miembro>
+  <miembro>
+    <nombre>Juan José Parra Díaz</nombre>
+    <codigo>201710041010</codigo>
+    <email>jjparrad@eafit.edu.co</email>
+  </miembro>
+  <mainclass clase="TigerMain"/>
+</grupo>

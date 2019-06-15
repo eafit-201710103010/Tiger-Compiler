@@ -1,0 +1,151 @@
+import java_cup.runtime.Symbol;
+
+terminal COMA, DP, PC, LPAREN, RPAREN, LCORCH, RCORCH, LLLAVE, RLLAVE, PUNTO, SUM, RES, MUL, DIV, IGUAL, MENOR, MAYOR, MENORI, MAYORI, AND, OR, DPIGUAL, ARRAY, IF, THEN, ELSE, WHILE, FOR, TO, DO, LET, IN, END, OF, BREAK, NIL, FUNCTION, VAR, TYPE, IMPORT, PRIMITIVE, CLASS, EXTENDS, METHOD, NEW, INTEGER, STRING, ID, MENMAY;
+non terminal Symbol prog, expr, expr1, expr2, lvalue, exprs, exprsAux, decls, decl, vardec, classfields, classfield, ty, tyfields, tyfieldsAux, typeid, op, prefix;
+
+precedence left ELSE;
+precedence left OR;
+precedence left AND;
+precedence left IGUAL,MENORI,MAYORI,MENOR,MAYOR,MENMAY;
+precedence left SUM,RES;
+precedence left MUL, DIV;
+
+start with prog;
+
+prog ::= expr
+     |	 decls
+     |   {: RESULT = new Symbol(TigerSymbols.EOF); :}
+     ;
+
+expr ::= NIL
+     |	 INTEGER
+     |	 STRING   
+     |	 prefix OF expr
+     |	 typeid LLLAVE  RLLAVE
+     |	 typeid LLLAVE ID IGUAL expr RLLAVE
+     |	 typeid LLLAVE ID IGUAL expr expr1 RLLAVE
+     |	 NEW typeid
+     |   ID 
+     |	 lvalue
+     |	 ID LPAREN  RPAREN
+     |	 ID LPAREN expr  RPAREN
+     |	 ID LPAREN expr expr2 RPAREN
+     |	 lvalue PUNTO ID LPAREN  RPAREN
+     |	 lvalue PUNTO ID LPAREN expr RPAREN
+     |	 lvalue PUNTO ID LPAREN expr expr2 RPAREN
+     |	 ID PUNTO ID LPAREN  RPAREN
+     |	 ID PUNTO ID LPAREN expr RPAREN
+     |	 ID PUNTO ID LPAREN expr expr2 RPAREN
+     |	 RES expr
+     |	 expr op expr
+     |	 LPAREN exprs RPAREN
+     |	 LPAREN RPAREN
+     |	 lvalue DPIGUAL expr
+     |   ID DPIGUAL expr
+     |	 IF expr THEN expr
+     |   IF expr THEN expr ELSE expr
+     |	 WHILE expr DO expr
+     |	 FOR ID DPIGUAL expr TO expr DO expr
+     |	 BREAK
+     |   LET IN END
+     |   LET IN exprs END
+     |	 LET decls IN END
+     |	 LET decls IN exprs END     
+     ;
+
+expr1::= COMA ID IGUAL expr expr1
+      |  COMA ID IGUAL expr
+      ;
+
+expr2::= COMA expr expr2
+      |  COMA expr
+      ;
+      
+prefix ::= typeid LCORCH expr RCORCH
+       ;
+       
+lvalue ::= ID PUNTO ID
+       |   prefix
+       |   lvalue PUNTO ID
+       |   lvalue LCORCH expr RCORCH
+       ;
+       
+exprs ::= expr 
+      |   expr exprsAux
+      ;
+
+exprsAux ::= PC expr exprsAux
+         |   PC expr
+	 ;
+
+decls ::= decl 
+      | decl decls
+      ;
+
+decl ::= TYPE ID IGUAL ty
+     |	 CLASS ID LLLAVE RLLAVE 
+     |	 CLASS ID LLLAVE classfields RLLAVE 
+     |	 CLASS ID EXTENDS typeid LLLAVE  RLLAVE
+     |	 CLASS ID EXTENDS typeid LLLAVE classfields RLLAVE 
+     |	 vardec
+     |	 FUNCTION ID LPAREN tyfields RPAREN DP typeid IGUAL expr
+     |   FUNCTION ID LPAREN tyfields RPAREN IGUAL expr
+     |	 FUNCTION ID LPAREN RPAREN DP typeid IGUAL expr
+     |   FUNCTION ID LPAREN RPAREN IGUAL expr
+     |	 PRIMITIVE ID LPAREN tyfields RPAREN DP typeid
+     |   PRIMITIVE ID LPAREN tyfields RPAREN
+     |	 PRIMITIVE ID LPAREN RPAREN DP typeid
+     |   PRIMITIVE ID LPAREN RPAREN
+     |	 IMPORT STRING
+     ;
+
+vardec ::= VAR ID DPIGUAL expr
+       |   VAR ID DP typeid DPIGUAL expr   
+       ;
+
+classfields ::= classfield classfields
+            |   classfield
+	    ;
+
+classfield ::= vardec
+	   |   METHOD ID LPAREN tyfields RPAREN IGUAL expr
+           |   METHOD ID LPAREN tyfields RPAREN DP typeid IGUAL expr
+	   |   METHOD ID LPAREN RPAREN IGUAL expr
+           |   METHOD ID LPAREN RPAREN DP typeid IGUAL expr
+	   ;
+
+
+ty ::= typeid
+   |   LLLAVE tyfields RLLAVE
+   |   LLLAVE  RLLAVE
+   |   ARRAY OF typeid
+   |   CLASS EXTENDS typeid LLLAVE RLLAVE
+   |   CLASS EXTENDS typeid LLLAVE classfields RLLAVE
+   |   CLASS LLLAVE RLLAVE
+   |   CLASS LLLAVE classfields RLLAVE
+   ;
+
+tyfields ::= ID DP typeid tyfieldsAux
+         |   ID DP typeid
+	 ;
+
+tyfieldsAux ::= COMA ID DP typeid tyfieldsAux
+            |   COMA ID DP typeid
+	    ;
+
+typeid ::= ID
+       ;
+
+op ::= SUM
+   |   RES
+   |   MUL
+   |   DIV
+   |   IGUAL
+   |   MENMAY
+   |   MENOR
+   |   MAYOR
+   |   MENORI
+   |   MAYORI
+   |   AND
+   |   OR
+   ;
